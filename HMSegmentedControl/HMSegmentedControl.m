@@ -437,12 +437,17 @@
                 
                 BOOL isImageInLineWidthText = self.imagePosition == HMSegmentedControlImagePositionLeftOfText || self.imagePosition == HMSegmentedControlImagePositionRightOfText;
                 if (isImageInLineWidthText) {
+                    UIImage *sectionImage = [self.sectionImages objectAtIndex:idx];
+                    float textImageSpacing = self.textImageSpacing;
+                    if (sectionImage.size.width == 0) {
+                        textImageSpacing = 0;
+                    }
                     if (self.imagePosition == HMSegmentedControlImagePositionLeftOfText) {
-                        imageXOffset = xOffset;
-                        textXOffset = imageXOffset + imageWidth + self.textImageSpacing;
+                        imageXOffset = xOffset + self.segmentEdgeInset.left;
+                        textXOffset = imageXOffset + imageWidth + textImageSpacing;
                     } else {
                         textXOffset = xOffset;
-                        imageXOffset = textXOffset + stringWidth + self.textImageSpacing;
+                        imageXOffset = textXOffset + stringWidth + textImageSpacing;
                     }
                 } else {
                     imageXOffset = xOffset + ([self.segmentWidthsArray[i] floatValue] - imageWidth) / 2.0f; // Start with edge inset
@@ -710,16 +715,18 @@
         int i = 0;
         [self.sectionTitles enumerateObjectsUsingBlock:^(id titleString, NSUInteger idx, BOOL *stop) {
             CGFloat stringWidth = [self measureTitleAtIndex:idx].width + self.segmentEdgeInset.right;
-            UIImage *sectionImage = [self.sectionImages objectAtIndex:i];
-            CGFloat imageWidth = sectionImage.size.width + self.segmentEdgeInset.left;
-            
+            UIImage *sectionImage = [self.sectionImages objectAtIndex:idx];
+            CGFloat imageWidth = sectionImage.size.width;
             CGFloat combinedWidth = 0.0;
             if (self.imagePosition == HMSegmentedControlImagePositionLeftOfText || self.imagePosition == HMSegmentedControlImagePositionRightOfText) {
-                combinedWidth = imageWidth + stringWidth + self.textImageSpacing;
+                if (sectionImage.size.width > 0) {
+                    combinedWidth = imageWidth + stringWidth + self.textImageSpacing + self.segmentEdgeInset.left;
+                } else {
+                    combinedWidth = stringWidth + self.segmentEdgeInset.left;
+                }
             } else {
                 combinedWidth = MAX(imageWidth, stringWidth);
             }
-            
             totalWidth += combinedWidth;
             
             [mutableSegmentWidths addObject:[NSNumber numberWithFloat:combinedWidth]];
