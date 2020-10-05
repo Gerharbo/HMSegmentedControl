@@ -62,9 +62,10 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
 
 @interface HMSegmentedControl : UIControl
 
-@property (nonatomic, strong, nullable) NSArray<NSString *> *sectionTitles;
-@property (nonatomic, strong, nullable) NSArray<UIImage *> *sectionImages;
-@property (nonatomic, strong, nullable) NSArray<UIImage *> *sectionSelectedImages;
+@property (nonatomic, strong) NSArray<NSString *> *sectionTitles;
+@property (nonatomic, strong) NSArray<UIImage *> *sectionImages;
+@property (nonatomic, strong) NSArray<UIImage *> *sectionSelectedImages;
+@property (nonatomic, readwrite) NSArray<NSNumber *> *segmentWidthsArray;
 
 /**
  Provide a block to be executed when selected index is changed.
